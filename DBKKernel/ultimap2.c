@@ -203,7 +203,7 @@ NTSTATUS ultimap2_waitForData(ULONG timeout, PULTIMAP2DATAEVENT data)
 		else
 			wr = KeWaitForMultipleObjects(Ultimap2CpuCount, Ultimap2_DataReady, WaitAny, UserRequest, UserMode, TRUE, &wait, waitblock);
 
-		ExFreePool(waitblock);
+		ExFreePool2(waitblock, 'tag', NULL, 0);
 
 		DbgPrint("ultimap2_waitForData wait returned %x", wr);
 
@@ -1005,7 +1005,7 @@ PVOID NTAPI ToPAAlloc(__in struct _RTL_GENERIC_TABLE *Table, __in CLONG ByteSize
 
 VOID NTAPI ToPADealloc(__in struct _RTL_GENERIC_TABLE *Table, __in __drv_freesMem(Mem) __post_invalid PVOID Buffer)
 {
-	ExFreePool(Buffer);
+	ExFreePool2(Buffer, 'tag', NULL, 0);
 }
 
 void* setupToPA(PToPA_ENTRY *Header, PVOID *OutputBuffer, PMDL *BufferMDL, PRTL_GENERIC_TABLE *gt, ULONG _BufferSize, int NoPMI)
@@ -1176,7 +1176,7 @@ void* setupToPA(PToPA_ENTRY *Header, PVOID *OutputBuffer, PMDL *BufferMDL, PRTL_
 		r = ExAllocatePool2(NonPagedPool, getToPAHeaderSize(_BufferSize), 'tag');
 		if (r == NULL)
 		{
-			ExFreePool(*OutputBuffer);
+			ExFreePool2(*OutputBuffer, 'tag', NULL, 0);
 			*OutputBuffer = NULL;
 			DbgPrint("setupToPA: Failure allocating header for buffer");
 			return NULL;
@@ -1194,10 +1194,10 @@ void* setupToPA(PToPA_ENTRY *Header, PVOID *OutputBuffer, PMDL *BufferMDL, PRTL_
 		if (singleToPASystem)
 			MmFreeContiguousMemory(*OutputBuffer);
 		else
-			ExFreePool(*OutputBuffer);
+			ExFreePool2(*OutputBuffer, 'tag', NULL, 0);
 		*OutputBuffer = NULL;
 
-		ExFreePool(*Header);
+		ExFreePool2(*Header, 'tag', NULL, 0);
 		*Header = NULL;
 
 		return NULL;
@@ -1370,7 +1370,7 @@ void SetupUltimap2(UINT32 PID, UINT32 BufferSize, WCHAR *Path, int rangeCount, P
 	{
 		if (Ultimap2Ranges)
 		{
-			ExFreePool(Ultimap2Ranges);
+			ExFreePool2(Ultimap2Ranges, 'tag', NULL, 0);
 			Ultimap2Ranges = NULL;
 		}
 
@@ -1633,7 +1633,7 @@ void DisableUltimap2(void)
 					if (singleToPASystem)
 						MmFreeContiguousMemory(PInfo[i]->ToPABuffer);
 					else
-						ExFreePool(PInfo[i]->ToPABuffer);
+						ExFreePool2(PInfo[i]->ToPABuffer, 'tag', NULL, 0);
 					PInfo[i]->ToPABuffer = NULL;
 				}
 
@@ -1648,45 +1648,45 @@ void DisableUltimap2(void)
 					if (singleToPASystem)
 						MmFreeContiguousMemory(PInfo[i]->ToPABuffer2);
 					else
-						ExFreePool(PInfo[i]->ToPABuffer2);
+						ExFreePool2(PInfo[i]->ToPABuffer2, 'tag', NULL, 0);
 
 					PInfo[i]->ToPABuffer2 = NULL;
 				}
 
 				if (PInfo[i]->ToPAHeader)
 				{
-					ExFreePool(PInfo[i]->ToPAHeader);
+					ExFreePool2(PInfo[i]->ToPAHeader, 'tag', NULL, 0);
 					PInfo[i]->ToPAHeader = NULL;
 				}
 
 				if (PInfo[i]->ToPAHeader2)
 				{
-					ExFreePool(PInfo[i]->ToPAHeader2);
+					ExFreePool2(PInfo[i]->ToPAHeader2, 'tag', NULL, 0);
 					PInfo[i]->ToPAHeader2 = NULL;
 				}
 
 				while (li = RtlGetElementGenericTable(PInfo[i]->ToPALookupTable, 0))
 					RtlDeleteElementGenericTable(PInfo[i]->ToPALookupTable, li);					
 					
-				ExFreePool(PInfo[i]->ToPALookupTable);
+				ExFreePool2(PInfo[i]->ToPALookupTable, 'tag', NULL, 0);
 				PInfo[i]->ToPALookupTable = NULL;
 
 				while (li = RtlGetElementGenericTable(PInfo[i]->ToPALookupTable2, 0))
 					RtlDeleteElementGenericTable(PInfo[i]->ToPALookupTable2, li);
 
-				ExFreePool(PInfo[i]->ToPALookupTable2);
+				ExFreePool2(PInfo[i]->ToPALookupTable2, 'tag', NULL, 0);
 				PInfo[i]->ToPALookupTable2 = NULL;
 		
 
-				ExFreePool(PInfo[i]);
+				ExFreePool2(PInfo[i], 'tag', NULL, 0);
 				PInfo[i] = NULL;
 			}
 
 			
 		}
 
-		ExFreePool((PVOID)PInfo);
-		ExFreePool(Ultimap2_DataReady);
+		ExFreePool2((PVOID)PInfo, 'tag', NULL, 0);
+		ExFreePool2(Ultimap2_DataReady, 'tag', NULL, 0);
 		
 		PInfo = NULL;
 
@@ -1695,7 +1695,7 @@ void DisableUltimap2(void)
 
 	if (Ultimap2Ranges)
 	{
-		ExFreePool(Ultimap2Ranges);
+		ExFreePool2(Ultimap2Ranges, 'tag', NULL, 0);
 		Ultimap2Ranges = NULL;
 
 		Ultimap2RangeCount = 0;

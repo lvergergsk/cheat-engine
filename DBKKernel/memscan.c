@@ -792,7 +792,7 @@ void CleanAccessedList()
 	{
 		previous = e;
 		e = e->Next;
-		ExFreePool(previous);
+		ExFreePool2(previous, 'tag', NULL, 0);
 	}
 
 	AccessedList = NULL;

@@ -31,7 +31,7 @@ RTL_GENERIC_COMPARE_RESULTS NTAPI ProcessListCompare(__in struct _RTL_GENERIC_TA
 
 PVOID NTAPI ProcessListAlloc(__in struct _RTL_GENERIC_TABLE *Table, __in CLONG ByteSize)
 {
-	PVOID r=ExAllocatePool(PagedPool, ByteSize);
+	PVOID r=ExAllocatePool2(PagedPool, ByteSize, 'tag');
 	RtlZeroMemory(r, ByteSize);
 
 	//DbgPrint("ProcessListAlloc %d",(int)ByteSize);
@@ -41,7 +41,7 @@ PVOID NTAPI ProcessListAlloc(__in struct _RTL_GENERIC_TABLE *Table, __in CLONG B
 VOID NTAPI ProcessListDealloc(__in struct _RTL_GENERIC_TABLE *Table, __in __drv_freesMem(Mem) __post_invalid PVOID Buffer)
 {
 	//DbgPrint("ProcessListDealloc");
-	ExFreePool(Buffer);
+	ExFreePool2(Buffer, 'tag', NULL, 0);
 }
 
 
@@ -417,8 +417,8 @@ VOID CleanProcessList()
 
 				RtlDeleteElementGenericTable(InternalProcessList, li);
 			}
-			
-			ExFreePool(InternalProcessList);
+
+			ExFreePool2(InternalProcessList, 'tag', NULL, 0);
 			InternalProcessList = NULL;
 		}
 		ExReleaseResourceLite(&ProcesslistR);

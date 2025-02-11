@@ -258,10 +258,11 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject,
 			}
 			else
 			{
-				ExFreePool(bufA);
-				ExFreePool(bufB);
-				ExFreePool(bufC);
-				ExFreePool(bufD);
+				ExFreePool2(bufA, 'tag', NULL, 0);
+				ExFreePool2(bufB, 'tag', NULL, 0);
+				ExFreePool2(bufC, 'tag', NULL, 0);
+				ExFreePool2(bufD, 'tag', NULL, 0);
+				
 
 				//DbgPrint("Failed reading the value\n");
 				ZwClose(reg);
@@ -303,10 +304,10 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject,
 		if (ntStatus != STATUS_SUCCESS)
 		{
 			//DbgPrint("IoCreateDevice failed\n");
-			ExFreePool(BufDriverString);
-			ExFreePool(BufDeviceString);
-			ExFreePool(BufProcessEventString);
-			ExFreePool(BufThreadEventString);
+			ExFreePool2(BufDriverString, 'tag', NULL, 0);
+			ExFreePool2(BufDeviceString, 'tag', NULL, 0);
+			ExFreePool2(BufProcessEventString, 'tag', NULL, 0);
+			ExFreePool2(BufThreadEventString, 'tag', NULL, 0);
 
 
 			if (reg)
@@ -326,10 +327,10 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject,
 			// Delete device object if not successful
 			IoDeleteDevice(pDeviceObject);
 
-			ExFreePool(BufDriverString);
-			ExFreePool(BufDeviceString);
-			ExFreePool(BufProcessEventString);
-			ExFreePool(BufThreadEventString);
+			ExFreePool2(BufDriverString, 'tag', NULL, 0);
+			ExFreePool2(BufDeviceString, 'tag', NULL, 0);
+			ExFreePool2(BufProcessEventString, 'tag', NULL, 0);
+			ExFreePool2(BufThreadEventString, 'tag', NULL, 0);
 
 
 			if (reg)
@@ -419,19 +420,19 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject,
 	DbgPrint("Cleaning up initialization buffers\n");
 	if (BufDriverString)
 	{
-		ExFreePool(BufDriverString);
+		ExFreePool2(BufDriverString, 'tag', NULL, 0);
 		BufDriverString = NULL;
 	}
 
 	if (BufProcessEventString)
 	{
-		ExFreePool(BufProcessEventString);
+		ExFreePool2(BufProcessEventString, 'tag', NULL, 0);
 		BufProcessEventString = NULL;
 	}
 
 	if (BufThreadEventString)
 	{
-		ExFreePool(BufThreadEventString);
+		ExFreePool2(BufThreadEventString, 'tag', NULL, 0);
 		BufThreadEventString = NULL;
 	}
 
@@ -670,7 +671,7 @@ void UnloadDriver(PDRIVER_OBJECT DriverObject)
 		NTSTATUS r = IoDeleteSymbolicLink(&uszDeviceString);
 		DbgPrint("IoDeleteSymbolicLink: %x\n", r);
 	}
-	ExFreePool(BufDeviceString);
+	ExFreePool2(BufDeviceString, 'tag', NULL, 0);
 #endif
 
 	CleanProcessList();

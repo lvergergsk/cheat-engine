@@ -225,12 +225,12 @@ void debugger_shutdown(void)
 		{
 			if (Stacks[i])
 			{
-				ExFreePool(Stacks[i]);
+				ExFreePool2(Stacks[i], 'tag', NULL, 0);
 				Stacks[i] = NULL;
 			}
 		}
 
-		ExFreePool(Stacks);
+		ExFreePool2(Stacks, 'tag', NULL, 0);
 		Stacks = NULL;
 	}
 }
@@ -262,7 +262,7 @@ void debugger_growstack()
 					RtlZeroMemory(newStacks[i], sizeof(SavedStack));				
 				else
 				{
-					ExFreePool(newStacks);
+					ExFreePool2(newStacks, 'tag', NULL, 0);
 					csLeave(&StacksCS);
 					KeLowerIrql(oldIRQL);
 					return;
@@ -270,7 +270,7 @@ void debugger_growstack()
 			}
 
 			
-			ExFreePool(Stacks);
+			ExFreePool2(Stacks, 'tag', NULL, 0);
 			Stacks = newStacks;
 		}
 

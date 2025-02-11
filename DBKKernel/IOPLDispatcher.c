@@ -60,7 +60,7 @@ NTSYSAPI NTSTATUS NTAPI ZwQueryInformationProcess(IN HANDLE ProcessHandle, IN PR
 void mykapc2(PKAPC Apc, PKNORMAL_ROUTINE NormalRoutine, PVOID NormalContext, PVOID SystemArgument1, PVOID SystemArgument2)
 {
 	ULONG_PTR iswow64;
-	ExFreePool(Apc);
+	ExFreePool2(Apc, 'tag', NULL, 0);
 	DbgPrint("My second kernelmode apc!!!!\n");
 	DbgPrint("SystemArgument1=%x\n",*(PULONG)SystemArgument1);
 	DbgPrint("SystemArgument2=%x\n", *(PULONG)SystemArgument2);
@@ -92,7 +92,7 @@ void mykapc(PKAPC Apc, PKNORMAL_ROUTINE NormalRoutine, PVOID NormalContext, PVOI
 
 	kApc = ExAllocatePool2(NonPagedPool, sizeof(KAPC), 'tag');
 
-	ExFreePool(Apc);
+	ExFreePool2(Apc, 'tag', NULL, 0);
 
 	DbgPrint("My kernelmode apc!!!!(irql=%d)\n", KeGetCurrentIrql());
 	
@@ -298,7 +298,7 @@ Called if dbvm has loaded the driver. Use this to setup a fake irp
 
 	RtlCopyMemory(lpOutBuffer, buffer, nOutBufferSize);
 
-	ExFreePool(buffer);
+	ExFreePool2(buffer, 'tag', NULL, 0);
 
 	return r;
 }
@@ -1334,7 +1334,7 @@ NTSTATUS DispatchIoctl(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 
 				inp = Irp->AssociatedIrp.SystemBuffer;
 
-				ExFreePool((PVOID)(UINT_PTR)inp->Address);
+				ExFreePool2((PVOID)(UINT_PTR)inp->Address, 'tag', NULL, 0);
 
 				ntStatus = STATUS_SUCCESS;
 
@@ -2490,11 +2490,11 @@ NTSTATUS DispatchIoctl(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 								int r = vmx_add_memory(mi->List, mi->Count);
 								DbgPrint("vmx_add_memory for %d pages returned %d\n", mi->Count, r);
 							}
-							ExFreePool(mi->List);
+							ExFreePool2(mi->List, 'tag', NULL, 0);
 						}
 						else
 							DbgPrint("Failure allocating mi->List");
-						ExFreePool(mi);
+						ExFreePool2(mi, 'tag', NULL, 0);
 					}
 					else
 						DbgPrint("Failure allocting mi");
@@ -2502,7 +2502,7 @@ NTSTATUS DispatchIoctl(IN PDEVICE_OBJECT DeviceObject, IN PIRP Irp)
 				}
 				else
 					DbgPrint("Failure getting pfn list");
-				ExFreePool(mdl); //only free the mdl, the rest belongs to dbvm now
+				ExFreePool2(mdl, 'tag', NULL, 0); //only free the mdl, the rest belongs to dbvm now
 
 				ntStatus = STATUS_SUCCESS;
 			}

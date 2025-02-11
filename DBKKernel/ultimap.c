@@ -121,7 +121,7 @@ Called from usermode to signal that the data has been handled
 	MmUnmapLockedPages((PVOID)(UINT_PTR)data->Address, (PMDL)(UINT_PTR)data->Mdl);
 	IoFreeMdl((PMDL)(UINT_PTR)data->Mdl);
 
-	ExFreePool((PVOID)(UINT_PTR)data->KernelAddress); //this memory is not needed anymore
+	ExFreePool2((PVOID)(UINT_PTR)data->KernelAddress, 'tag', NULL, 0); //this memory is not needed anymore
 
 
 	if (DataBlock)
@@ -159,7 +159,7 @@ Called from usermode to wait for data
 		else
 			r=KeWaitForMultipleObjects(MaxDataBlocks, DataReadyPointerList, WaitAny, UserRequest, UserMode, TRUE, &wait, waitblock);
 
-		ExFreePool(waitblock);	
+		ExFreePool2(waitblock, 'tag', NULL, 0);
 
 		data->Block=r-STATUS_WAIT_0;
 
@@ -440,7 +440,7 @@ VOID ultimap_disable_dpc(IN struct _KDPC *Dpc, IN PVOID DeferredContext, IN PVOI
 
 		if (DS_AREA[cpunr()])
 		{
-			ExFreePool(DS_AREA[cpunr()]);
+			ExFreePool2(DS_AREA[cpunr()], 'tag', NULL, 0);
 			DS_AREA[cpunr()]=NULL;
 		}
 	}
@@ -473,12 +473,12 @@ void ultimap_disable(void)
 		for (i=0; i<MaxDataBlocks; i++)
 			KeSetEvent(&DataBlock[i].DataReady,0, FALSE);
 
-		ExFreePool(DataBlock);
+		ExFreePool2(DataBlock, 'tag', NULL, 0);
 		DataBlock=NULL;
 
 		if (DataReadyPointerList)
 		{
-			ExFreePool(DataReadyPointerList);
+			ExFreePool2(DataReadyPointerList, 'tag', NULL, 0);
 			DataReadyPointerList=NULL;		
 		}
 		ExReleaseFastMutex(&DataBlockMutex);
