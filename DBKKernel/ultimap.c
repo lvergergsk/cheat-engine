@@ -145,7 +145,7 @@ Called from usermode to wait for data
 
 	if (DataBlock)
 	{		
-		waitblock=ExAllocatePool(NonPagedPool, MaxDataBlocks*sizeof(KWAIT_BLOCK));
+		waitblock=ExAllocatePool2(NonPagedPool, MaxDataBlocks*sizeof(KWAIT_BLOCK), 'tag');
 
 
 		wait.QuadPart=-10000LL * timeout;
@@ -251,7 +251,7 @@ int perfmon_interrupt_centry(void)
 		DbgPrint("Entry threadid=%d\n", PsGetCurrentThreadId());
 		
 
-		temp=ExAllocatePool(NonPagedPool, blocksize);
+		temp=ExAllocatePool2(NonPagedPool, blocksize, 'tag');
 		if (temp)
 		{
 			RtlCopyMemory(temp, (PVOID *)(UINT_PTR)DS_AREA[cpunr()]->BTS_BufferBaseAddress, blocksize);
@@ -518,7 +518,7 @@ Call this for each processor
 
 	if (params->DS_AREA_SIZE)
 	{
-		DS_AREA[cpunr()]=ExAllocatePool(NonPagedPool, params->DS_AREA_SIZE);
+		DS_AREA[cpunr()]=ExAllocatePool2(NonPagedPool, params->DS_AREA_SIZE, 'tag');
 
 		if (DS_AREA[cpunr()] == NULL)
 		{
@@ -693,8 +693,8 @@ NTSTATUS ultimap(UINT64 cr3, UINT64 dbgctl_msr, int _DS_AREA_SIZE, BOOL savetofi
 
 	//Datablock inits
 
-	DataBlock=ExAllocatePool(NonPagedPool, sizeof(_DataBlock) * MaxDataBlocks);
-	DataReadyPointerList=ExAllocatePool(NonPagedPool, sizeof(PVOID) * MaxDataBlocks);
+	DataBlock=ExAllocatePool2(NonPagedPool, sizeof(_DataBlock) * MaxDataBlocks, 'tag');
+	DataReadyPointerList=ExAllocatePool2(NonPagedPool, sizeof(PVOID) * MaxDataBlocks, 'tag');
 
 	RtlZeroMemory(DataBlock, sizeof(_DataBlock) * MaxDataBlocks);
 	RtlZeroMemory(DataReadyPointerList, sizeof(PVOID) * MaxDataBlocks);

@@ -196,7 +196,7 @@ VOID CreateProcessNotifyRoutine(IN HANDLE  ParentId, IN HANDLE  ProcessId, IN BO
 
 				if (InternalProcessList == NULL)
 				{
-					InternalProcessList = ExAllocatePool(PagedPool, sizeof(RTL_GENERIC_TABLE));
+					InternalProcessList = ExAllocatePool2(PagedPool, sizeof(RTL_GENERIC_TABLE), 'tag');
 					if (InternalProcessList)
 						RtlInitializeGenericTable(InternalProcessList, ProcessListCompare, ProcessListAlloc, ProcessListDealloc, NULL);
 				}
@@ -271,7 +271,7 @@ VOID CreateProcessNotifyRoutine(IN HANDLE  ParentId, IN HANDLE  ProcessId, IN BO
 
 					//allocate a block of memory for the processlist
 
-					tempProcessEntry = ExAllocatePool(PagedPool, sizeof(struct ProcessData));
+					tempProcessEntry = ExAllocatePool2(PagedPool, sizeof(struct ProcessData), 'tag');
 					tempProcessEntry->ProcessID = ProcessId;
 					tempProcessEntry->PEProcess = CurrentProcess;
 					tempProcessEntry->Threads = NULL;

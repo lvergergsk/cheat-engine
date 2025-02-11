@@ -6,3 +6,28 @@ Cheat Engine/bin
 *.lrj
 Cheat Engine/cheatengine.lps
 Cheat Engine/cheatengine.res
+
+# Exclude Visual Studio folder
+.vs/
+
+# Build output folders
+[Dd]ebug/
+[Dd]ebugPublic/
+[Dd]ist/
+[Dd]eploy/
+Release/
+x64/
+x86/
+x64/Release/
+x86/Release/
+x64/Debug/
+x86/Debug/
+x64/DebugPublic/
+x86/DebugPublic/
+
+# Other build outputs
+bin/
+obj/
+
+# User-specific Visual Studio files
+*.vcxproj.user
