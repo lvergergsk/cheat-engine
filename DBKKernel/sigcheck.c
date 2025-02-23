@@ -9,7 +9,6 @@ This is only in case of a signed release build
 #include <Ntstrsafe.h>
 #include <ntimage.h>
 
-
 #include "sigcheck.h"
 
 
@@ -47,7 +46,7 @@ Caller is responsible for calling ExFreePool on the buffer
 		{
 
 			*size = fsi.EndOfFile.LowPart;
-			*buffer = ExAllocatePool2(PagedPool, fsi.EndOfFile.LowPart, "tag");	 //caller MUST free this
+			*buffer = ExAllocatePool2(PagedPool, fsi.EndOfFile.LowPart, 'tag');	 //caller MUST free this
 
 
 			if (*buffer)
@@ -94,7 +93,7 @@ Calculates a hash from the buffer and then checks the signature
 			if (s == STATUS_SUCCESS)
 			{
 				BCRYPT_HASH_HANDLE hHash;
-				PUCHAR pbHashObject = ExAllocatePool2(PagedPool, objectlength, "tag");
+				PUCHAR pbHashObject = ExAllocatePool2(PagedPool, objectlength, 'tag');
 
 				if (pbHashObject)
 				{
@@ -108,7 +107,7 @@ Calculates a hash from the buffer and then checks the signature
 							s = BCryptGetProperty(hashAlgoritm, BCRYPT_HASH_LENGTH, (PUCHAR)&hashlength, sizeof(DWORD), &size, 0);
 							if (s == STATUS_SUCCESS)
 							{
-								PUCHAR pbHashBuffer = ExAllocatePool2(PagedPool, hashlength, "tag");
+								PUCHAR pbHashBuffer = ExAllocatePool2(PagedPool, hashlength, 'tag');
 								if (pbHashBuffer)
 								{
 									s = BCryptFinishHash(hHash, pbHashBuffer, hashlength, 0);

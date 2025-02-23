@@ -21,7 +21,6 @@
 
 #include "ultimap2\apic.h"
 
-
 #if (AMD64 && TOBESIGNED)
 #include "sigcheck.h"
 #endif
