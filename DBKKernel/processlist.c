@@ -31,7 +31,7 @@ RTL_GENERIC_COMPARE_RESULTS NTAPI ProcessListCompare(__in struct _RTL_GENERIC_TA
 
 PVOID NTAPI ProcessListAlloc(__in struct _RTL_GENERIC_TABLE *Table, __in CLONG ByteSize)
 {
-	PVOID r=ExAllocatePool2(PagedPool, ByteSize, 'tag');
+	PVOID r=ExAllocatePool2(POOL_FLAG_PAGED, ByteSize, 'tag');
 	RtlZeroMemory(r, ByteSize);
 
 	//DbgPrint("ProcessListAlloc %d",(int)ByteSize);
@@ -196,7 +196,7 @@ VOID CreateProcessNotifyRoutine(IN HANDLE  ParentId, IN HANDLE  ProcessId, IN BO
 
 				if (InternalProcessList == NULL)
 				{
-					InternalProcessList = ExAllocatePool2(PagedPool, sizeof(RTL_GENERIC_TABLE), 'tag');
+					InternalProcessList = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(RTL_GENERIC_TABLE), 'tag');
 					if (InternalProcessList)
 						RtlInitializeGenericTable(InternalProcessList, ProcessListCompare, ProcessListAlloc, ProcessListDealloc, NULL);
 				}
@@ -271,7 +271,7 @@ VOID CreateProcessNotifyRoutine(IN HANDLE  ParentId, IN HANDLE  ProcessId, IN BO
 
 					//allocate a block of memory for the processlist
 
-					tempProcessEntry = ExAllocatePool2(PagedPool, sizeof(struct ProcessData), 'tag');
+					tempProcessEntry = ExAllocatePool2(POOL_FLAG_PAGED, sizeof(struct ProcessData), 'tag');
 					tempProcessEntry->ProcessID = ProcessId;
 					tempProcessEntry->PEProcess = CurrentProcess;
 					tempProcessEntry->Threads = NULL;
